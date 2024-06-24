@@ -6,4 +6,4 @@ async def amain(text : str, voice : str):
     await communicate.save("temp/output.mp3")
     pygame.mixer.init()
     pygame.mixer.music.load("temp/output.mp3")
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(loops=0)
