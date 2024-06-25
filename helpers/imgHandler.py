@@ -1,7 +1,7 @@
-from googleapiclient.discovery import build  # construtor de serviços do google drive
-from google.oauth2 import service_account  # autenticação com a conta de serviço
+from googleapiclient.discovery import build  # type: ignore # construtor de serviços do google drive
+from google.oauth2 import service_account  # type: ignore # autenticação com a conta de serviço
 import io, os  # módulos de entrada e saída e sistema operacional e operações de arquivos
-from googleapiclient.http import MediaIoBaseDownload  # download de arquivos
+from googleapiclient.http import MediaIoBaseDownload  # type: ignore # download de arquivos
 
 SERVICE_ACCOUNT_FILE = 'key/sice-425317-8ce00dfa057b.json'  # arquivo de chave da conta de serviço
 SCOPES = ['https://www.googleapis.com/auth/drive']  # escopos de acesso ao drive
@@ -16,13 +16,13 @@ def dowload_folder(folder_id, local_path):
         folder_id (id): ID da pasta no drive
         local_path (string): Local onde a pasta será baixada
     """
-    
+
     results = service.files().list(
         q=f"'{folder_id}' in parents and trashed = false",
         fields="nextPageToken, files(id, name, mimeType)"
     ).execute()
     items = results.get('files', [])
-    
+
     for item in items:
         if item['mimeType'] == "application/vnd.google-apps.folder":  # Cuida do que fazer caso seja uma pasta
             folder_path = os.path.join(local_path, item['name'])

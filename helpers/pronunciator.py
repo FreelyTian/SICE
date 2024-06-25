@@ -26,7 +26,7 @@ def say():
     pygame.mixer.init()  # Inicializa o mixer do pygame
     pygame.mixer.music.load("temp/output.mp3")  # Carrega o arquivo de áudio
     pygame.mixer.music.play(loops=0)  # Toca o arquivo de áudio
-    
+
     while pygame.mixer.music.get_busy():  # Enquanto o arquivo de áudio estiver tocando, impede que o programa termine
         pygame.time.Clock().tick(10)
 
@@ -34,4 +34,3 @@ def say():
     pygame.mixer.music.unload()  # Descarrega o arquivo de áudio, acho que isso resolve um bug de file in use
     pygame.mixer.quit()  # Encerra o mixer do pygame
     pygame.quit()  # Encerra o pygame, mas não sei se é necessário
-    

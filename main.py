@@ -28,14 +28,14 @@ def find_and_match(frame):
     Nenhum valor de retorno.
     """
     global match, name, said, last_said, forbidden
-    
+
     file_lock = FileLock("temp/output.lock")  # Inicializa um objeto de trava de arquivo
-    
+
     try:
         result = DeepFace.find(frame, 'face-db/')  # Realiza o reconhecimento facial no frame usando as imagens do banco de imagens 'face-db/'
-        
+
         with lock:
-            
+
             if len(result) == 0:
                 match = False
                 print("Não reconhecido")
@@ -47,12 +47,12 @@ def find_and_match(frame):
                 name = re.search(ptn, fullname).group(0)
                 metadata = get_metadata(name)
                 welcome_string = get_welcome_string(metadata)
-                
+
                 if not forbidden and time.time() - last_said > 15:  # Verifica se já passaram 15 segundos desde a última vez que a mensagem foi dita
                     said = False # Libera a flag de dito pra poder repetir a frase.
                     print("Reiniciando contador de tempo...")
                     last_said = time.time() # Atualiza o tempo da última vez que algo foi dito
-                    
+
                 if not said: # Caso possa, vai dizer a mensagem.
                     file_lock.acquire()
                     asyncio.run(save_say_mp3(welcome_string, "pt-BR-ThalitaNeural"))
@@ -61,36 +61,34 @@ def find_and_match(frame):
                     said = True # Atualiza a flag de dito pra não repetir isso várias vezes.
                 else:
                     print("Já disse") # Se não pode dizer, vai dizer que já disse.
-                    
+
     except Exception as e:
         with lock:
             match = False
             unrecognized_said = said and forbidden # Impede de dizer a mensagem de não reconhecido várias vezes.
-            
+
             if not unrecognized_said: # Se não disse a mensagem de não reconhecido, vai dizer.
                     asyncio.run(save_say_mp3("Não reconhecido, favor dirija-se ao atendimento para fazer seu cadastro.", "pt-BR-ThalitaNeural"))
                     say()
                     said = True
                     forbidden = True
-                    
+
         print(f"Erro durante o reconhecimento: {e}")
     finally:
         file_lock.release() # Libera a trava de arquivo
 
 while True:
     ret, frame = cap.read()  # Lê um frame do vídeo
-    
+
     if cv2.waitKey(1) & 0xFF == ord('q'):  # Verifica se a tecla 'q' foi pressionada para sair do loop
         break
-    
+
     if ret:
-        
         if cnt % 60 == 0: # Verifica se o contador é múltiplo de 60 (aproximadamente 1 vez por segundo) pra rodar o reconhecimento (é menos pesado)
-            
-            if not any(thread.is_alive() for thread in threading.enumerate() if thread is not threading.main_thread()): 
+            if not any(thread.is_alive() for thread in threading.enumerate() if thread is not threading.main_thread()):
                 # Executa a função find_and_match em uma nova thread (sem travar execução do programa principal)
                 threading.Thread(target=find_and_match, args=(frame,)).start()
-                
+
         cnt += 1
 
         if match:

@@ -36,7 +36,7 @@ def get_welcome_string(metadata) -> str:
         cargo_string = f'{metadata["cargo"][0]} {metadata["cargo"][-1]}'
     else:  # Alguns não tem honorífico ou cargo, como estagiários.
         cargo_string = metadata["cargo"][0]
-        
+
     if datetime.datetime.now().hour < 12:  # Caso seja de manhã, vai dizer bom dia.
         greeting = "Bom dia"
     elif datetime.datetime.now().hour < 18:  # Caso seja de tarde, vai dizer boa tarde.
@@ -44,7 +44,7 @@ def get_welcome_string(metadata) -> str:
     else:  # Caso seja de noite, vai dizer boa noite. Mas meio estranho, já que é pra ser uma saudação de chegada e não tem turno noturno.
         greeting = "Boa noite..."
         message = f'{greeting} {cargo_string} {metadata["nome"]}, o que faz aqui a esta hora?'
-    
+
     message = f'{greeting} {cargo_string} {metadata["nome"]}.' # Monta a mensagem de boas-vindas. De acordo com a hora, nome, cargo e honorífico.
 
     return message
